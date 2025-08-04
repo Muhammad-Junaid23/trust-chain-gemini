@@ -1,9 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { Provider } from 'react-redux'; // Import Provider
-import { store } from './redux/store'; // Import your Redux store
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 
-import { LoginPage } from './pages/Auth';
+import { LoginPage, SignupPage } from './pages/Auth'; // Import SignupPage
 import { DashboardPage } from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -12,14 +12,14 @@ const App: React.FC = () => {
     <Provider store={store}>
       <Router>
         <Routes>
-          {/* Public Route for Login */}
-          {/* <Route path='/' element={<LoginPageWrapper />} /> */}
+          {/* Public Routes */}
           <Route path='/' element={<LoginPage />} />
-
-          {/* Protected Route for Dashboard (conceptually for now) */}
-          {/* In a real app, this would be wrapped in a PrivateRoute component */}
-          <Route path='/dashboard' element={<DashboardPage />} />
-
+          <Route path='/signup' element={<SignupPage />} /> {/* NEW ROUTE */}
+          {/* Protected Routes Group */}
+          <Route element={<PrivateRoute />}>
+            <Route path='/dashboard' element={<DashboardPage />} />
+            {/* Add other protected routes here */}
+          </Route>
           {/* Fallback for unknown routes */}
           <Route
             path='*'

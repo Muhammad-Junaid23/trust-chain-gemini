@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Added useState for nodeStatus
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-
-// Import Redux hooks and actions/selectors
-import { useDispatch, useSelector } from 'react-redux';
-import { logout, RootState, AppDispatch } from '../../redux'; // Assuming you added index.ts barrel export in redux
+import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
+import { logout, RootState, AppDispatch } from '../../redux'; // Import RootState and AppDispatch
+import { ConnectWalletButton } from '../../components'; // Import ConnectWalletButton
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-
-  // Get user and logout from Redux store
-  const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
 
-  const userName = user ? user.name : 'Guest'; // Use user.name from Redux state
-  const walletBalance = '12,345.67 NEXER';
+  // Get user from Redux auth slice
+  // const user = useSelector((state: RootState) => state.auth.user);
+  const user = 'Ahmed';
+
+  // Use useState for nodeStatus as it's dynamic
   const [nodeStatus, setNodeStatus] = useState<'Active' | 'Not Active' | 'Pending' | 'Offline'>('Not Active');
+
+  const userName = user ? user : 'Guest';
+  const walletBalance = '12,345.67 NEXER'; // This will be your Trust Chain specific token balance eventually
 
   const handleBecomeNode = () => {
     alert('Simulating "Become a Node" process...');
     console.log('User initiated "Become a Node".');
+    // In a real app, this would likely trigger a flow
+    // that could change nodeStatus, e.g., setNodeStatus("Pending");
   };
 
   const handleLogout = () => {
     dispatch(logout()); // Dispatch the logout action
-    // Redirection to login page will happen automatically due to PrivateRoute logic
   };
 
   return (
@@ -32,19 +35,24 @@ const DashboardPage: React.FC = () => {
       {/* Header */}
       <header className='flex justify-between items-center mb-8 pb-4 border-b border-gray-300'>
         <h1 className='text-3xl font-bold text-gray-900'>Welcome, {userName}!</h1>
-        <Button onClick={handleLogout} className='bg-red-500 hover:bg-red-700'>
-          Logout
-        </Button>
+        <div className='flex items-center space-x-4'>
+          {' '}
+          {/* Container for buttons */}
+          <ConnectWalletButton /> {/* Integrate the new button here */}
+          <Button onClick={handleLogout} className='bg-red-500 hover:bg-red-700'>
+            Logout
+          </Button>
+        </div>
       </header>
 
       {/* Dashboard Content Grid */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-        {/* Wallet Balance Card */}
+        {/* Wallet Balance Card (for Trust Chain specific token) */}
         <div className='bg-white p-6 rounded-lg shadow-md'>
-          <h2 className='text-xl font-semibold text-gray-800 mb-4'>Wallet Balance</h2>
+          <h2 className='text-xl font-semibold text-gray-800 mb-4'>Trust Chain Wallet Balance</h2>
           <p className='text-4xl font-bold text-blue-600 mb-2'>{walletBalance}</p>
-          <p className='text-sm text-gray-500'>Your current NEXER Coin balance</p>
-          <button className='mt-4 text-blue-500 hover:underline text-sm'>View Transaction History</button>
+          <p className='text-sm text-gray-500'>Your current NEXER Coin balance on Trust Chain</p>
+          <button className='mt-4 text-blue-500 hover:underline text-sm'>View Trust Chain Transaction History</button>
         </div>
 
         {/* Node Status Card */}

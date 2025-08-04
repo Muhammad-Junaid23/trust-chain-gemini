@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice'; // We'll create this next
+import authReducer from './slices/authSlice';
+import walletReducer from './slices/walletSlice';
 
 /**
  * @concept Redux Store
@@ -14,6 +15,7 @@ export const store = configureStore({
     // Each key here represents a slice of your global state.
     // authReducer will manage all state related to authentication.
     auth: authReducer,
+    wallet: walletReducer,
     // Add other reducers here as your app grows:
     // wallet: walletReducer,
     // node: nodeReducer,

@@ -1,130 +1,171 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
-/**
- * @concept Redux Slice
- * A "slice" is a collection of Redux logic for a single feature
- * (like authentication). `createSlice` automatically generates action
- * creators and reducers for you, reducing boilerplate.
- */
-
-// 1. Define the shape of your authentication state
-interface AuthState {
-  user: { name: string } | null; // Represents logged-in user data
-  isLoggedIn: boolean;
-  isLoading: boolean; // For tracking async operations like login
-  error: string | null; // For storing authentication errors
+// Define the shape of the user and the overall authentication state
+interface User {
+  id: string;
+  email: string;
 }
 
-// 2. Define the initial state for the auth slice
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
+// Interface for storing temporary signup credentials to make the login work
+interface SignupCredentials {
+  email: string;
+  password: string;
+}
+
 const initialState: AuthState = {
   user: null,
+  token: null,
   isLoggedIn: false,
   isLoading: false,
   error: null,
 };
 
-// Check for stored user on initial load (similar to what we did in AuthContext)
-// This happens synchronously before the component mounts.
+// Check for stored user and token on initial load
 try {
   const storedUser = localStorage.getItem('trustChainUser');
-  if (storedUser) {
+  const storedToken = localStorage.getItem('trustChainToken');
+  if (storedUser && storedToken) {
     initialState.user = JSON.parse(storedUser);
+    initialState.token = storedToken;
     initialState.isLoggedIn = true;
   }
 } catch (e) {
-  console.error('Failed to parse stored user from localStorage:', e);
-  localStorage.removeItem('trustChainUser'); // Clear invalid data
+  console.error('Failed to parse stored user or token from localStorage:', e);
+  localStorage.removeItem('trustChainUser');
+  localStorage.removeItem('trustChainToken');
 }
 
-/**
- * @concept Redux Thunk (with createAsyncThunk)
- * `createAsyncThunk` is an RTK utility for handling asynchronous logic.
- * It generates pending, fulfilled, and rejected action types automatically.
- * Your components will 'dispatch' this thunk.
- */
-export const login = createAsyncThunk(
-  'auth/login', // Action type prefix (e.g., 'auth/login/pending', 'auth/login/fulfilled')
-  async (walletKey: string, { rejectWithValue }) => {
-    // Simulate an API call to your FastAPI backend
-    // In a real scenario:
-    // const response = await api.post('/auth/login', { walletKey });
-    // if (!response.ok) {
-    //   return rejectWithValue(response.data.message || 'Login failed');
-    // }
-    // const userData = response.data.user; // Assuming user data comes from backend
-    // localStorage.setItem('jwtToken', response.data.token); // Store token
-    // localStorage.setItem('trustChainUser', JSON.stringify(userData));
+// Thunk for user signup
+export const signup = createAsyncThunk(
+  'auth/signup',
+  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      // Simulate an API call to a backend /signup endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate network delay
+      // Store the new credentials in localStorage to be used by the login thunk
+      localStorage.setItem('trustChainSignupCredentials', JSON.stringify({ email, password }));
 
-    // Dummy validation for the wallet key
-    if (walletKey.trim() === '') {
-      return rejectWithValue('Wallet key cannot be empty.');
+      const dummyUser: User = { id: 'user-' + Date.now(), email };
+      const dummyToken = `dummy-jwt-token-for-${email}`;
+
+      localStorage.setItem('trustChainUser', JSON.stringify(dummyUser));
+      localStorage.setItem('trustChainToken', dummyToken);
+
+      return { user: dummyUser, token: dummyToken };
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Signup failed');
     }
-    if (walletKey.length < 10) {
-      return rejectWithValue('Invalid wallet key length.');
-    }
-
-    const dummyUser = { name: 'Trust Chain User' }; // Dummy user data
-    localStorage.setItem('trustChainUser', JSON.stringify(dummyUser)); // Persist dummy user
-    return dummyUser; // This will be the `payload` of the 'fulfilled' action
   }
 );
 
-// 3. Create the auth slice
+// Thunk for user login
+export const login = createAsyncThunk(
+  'auth/login',
+  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      // Simulate an API call to a backend /login endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // --- FIX: Use a more flexible validation logic ---
+      let isAuthenticated = false;
+      let userDetails: User | null = null;
+      let token: string | null = null;
+
+      // 1. Check against the hardcoded test user
+      if (email === 'test@example.com' && password === 'password123') {
+        isAuthenticated = true;
+        userDetails = { id: 'user-001', email: 'test@example.com' };
+        token = 'dummy-jwt-token-for-test@example.com';
+      }
+
+      // 2. Or, check against the last signed-up user's credentials from localStorage
+      const storedCredentials = localStorage.getItem('trustChainSignupCredentials');
+      if (storedCredentials) {
+        const { email: storedEmail, password: storedPassword }: SignupCredentials = JSON.parse(storedCredentials);
+        if (email === storedEmail && password === storedPassword) {
+          isAuthenticated = true;
+          userDetails = { id: 'user-' + storedEmail, email: storedEmail };
+          token = `dummy-jwt-token-for-${storedEmail}`;
+        }
+      }
+
+      // If neither condition is met, fail the login
+      if (!isAuthenticated || !userDetails || !token) {
+        throw new Error('Invalid email or password.');
+      }
+      // --- END FIX ---
+
+      localStorage.setItem('trustChainUser', JSON.stringify(userDetails));
+      localStorage.setItem('trustChainToken', token);
+
+      return { user: userDetails, token };
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Login failed');
+    }
+  }
+);
+
+// Slice definition
 const authSlice = createSlice({
-  name: 'auth', // Name of the slice
-  initialState, // The initial state
-  /**
-   * @concept Reducers
-   * Functions that describe how state changes in response to actions.
-   * `reducers` field defines "case reducers" for synchronous actions.
-   * RTK uses Immer, so you can "mutate" state directly (under the hood, it's immutable).
-   */
+  name: 'auth',
+  initialState,
   reducers: {
-    // This is a synchronous action creator for logout
     logout: (state) => {
       state.user = null;
+      state.token = null;
       state.isLoggedIn = false;
       state.error = null;
-      localStorage.removeItem('trustChainUser'); // Clear stored user
+      localStorage.removeItem('trustChainUser');
+      localStorage.removeItem('trustChainToken');
+      // OPTIONAL: Clear signup credentials on logout if you want
+      // localStorage.removeItem('trustChainSignupCredentials');
     },
-    // You could add other synchronous actions here, e.g., setUserData, clearError
   },
-  /**
-   * @concept Extra Reducers
-   * Used to handle actions that are defined outside of this slice (e.g., actions
-   * generated by `createAsyncThunk`, or actions from other slices if needed).
-   */
   extraReducers: (builder) => {
     builder
+      // Handle login thunk lifecycle
       .addCase(login.pending, (state) => {
-        // When the login thunk starts
         state.isLoading = true;
         state.error = null;
-        state.isLoggedIn = false; // Ensure not logged in while pending
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<{ name: string }>) => {
-        // When the login thunk successfully completes
+      .addCase(login.fulfilled, (state, action: PayloadAction<{ user: User; token: string }>) => {
         state.isLoading = false;
-        state.user = action.payload; // Set user data from the thunk's return value
         state.isLoggedIn = true;
-        state.error = null;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
       })
       .addCase(login.rejected, (state, action) => {
-        // When the login thunk fails
         state.isLoading = false;
-        state.error = (action.payload as string) || 'Authentication failed'; // Error message
-        state.user = null;
         state.isLoggedIn = false;
+        state.error = (action.payload as string) || 'Authentication failed';
+      })
+      // Handle signup thunk lifecycle
+      .addCase(signup.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(signup.fulfilled, (state, action: PayloadAction<{ user: User; token: string }>) => {
+        state.isLoading = false;
+        state.isLoggedIn = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isLoggedIn = false;
+        state.error = (action.payload as string) || 'Signup failed';
       });
   },
 });
 
-// `createSlice` automatically generates action creators from the `reducers` object.
-// Exporting them allows components to dispatch these actions.
 export const { logout } = authSlice.actions;
-
-// Export the reducer function generated by `createSlice`.
-// This reducer will be combined into the main store.
 export default authSlice.reducer;
