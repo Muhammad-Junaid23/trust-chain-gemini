@@ -1,27 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../../components/Button'; // Assuming you'll use the same button component
+import Button from '../../components/Button';
+
+// Import Redux hooks and actions/selectors
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, RootState, AppDispatch } from '../../redux'; // Assuming you added index.ts barrel export in redux
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Placeholder for user data (would come from an API in a real app)
-  const userName = 'Ahmed';
+  // Get user and logout from Redux store
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const userName = user ? user.name : 'Guest'; // Use user.name from Redux state
   const walletBalance = '12,345.67 NEXER';
-  const nodeStatus = 'Active'; // Could be "Active", "Pending", "Offline"
+  const [nodeStatus, setNodeStatus] = useState<'Active' | 'Not Active' | 'Pending' | 'Offline'>('Not Active');
 
   const handleBecomeNode = () => {
-    // In a real application, this would navigate to a node setup page
-    // or trigger a modal/flow to activate node contribution.
     alert('Simulating "Become a Node" process...');
     console.log('User initiated "Become a Node".');
   };
 
   const handleLogout = () => {
-    // Simulate logout: In a real app, this would clear authentication tokens
-    // and redirect to the login page.
-    // alert('Logging out...');
-    navigate('/'); // Redirect to login page
+    dispatch(logout()); // Dispatch the logout action
+    // Redirection to login page will happen automatically due to PrivateRoute logic
   };
 
   return (
@@ -41,7 +44,6 @@ const DashboardPage: React.FC = () => {
           <h2 className='text-xl font-semibold text-gray-800 mb-4'>Wallet Balance</h2>
           <p className='text-4xl font-bold text-blue-600 mb-2'>{walletBalance}</p>
           <p className='text-sm text-gray-500'>Your current NEXER Coin balance</p>
-          {/* Future: Add link to transaction history */}
           <button className='mt-4 text-blue-500 hover:underline text-sm'>View Transaction History</button>
         </div>
 
