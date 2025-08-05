@@ -7,6 +7,7 @@ import Button from '../../components/Button';
 import AuthLayout from '../../layouts/AuthLayout';
 
 const SignupPage: React.FC = () => {
+  const [name, setName] = useState(''); // <-- NEW STATE
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -36,7 +37,8 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    const resultAction = await dispatch(signup({ email, password }));
+    // Pass the name to the signup thunk
+    const resultAction = await dispatch(signup({ email, password, name })); // <-- NAME ADDED
 
     if (signup.fulfilled.match(resultAction)) {
       // Redirection handled by useEffect
@@ -51,6 +53,15 @@ const SignupPage: React.FC = () => {
       <p className='text-sm text-gray-600 text-center mb-6'>Sign up to access your Trust Chain dashboard.</p>
       <form onSubmit={handleSignup}>
         <InputField
+          label='Full Name'
+          id='name'
+          type='text'
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder='Enter your full name'
+          required
+        />
+        <InputField
           label='Email'
           id='email'
           type='email'
@@ -58,6 +69,7 @@ const SignupPage: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder='Enter your email'
           required
+          className='mt-4'
         />
         <InputField
           label='Password'
@@ -82,7 +94,7 @@ const SignupPage: React.FC = () => {
 
         {localError && <p className='text-red-500 text-sm mb-4 text-center'>{localError}</p>}
 
-        <Button type='submit' onClick={() => {}} className='w-full mt-6' disabled={isLoading}>
+        <Button type='submit' className='w-full mt-6' disabled={isLoading} onClick={() => {}}>
           {isLoading ? 'Signing up...' : 'Sign Up'}
         </Button>
       </form>
