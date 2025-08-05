@@ -1,33 +1,29 @@
-import React, { useState } from 'react'; // Added useState for nodeStatus
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
-import { logout, RootState, AppDispatch } from '../../redux'; // Import RootState and AppDispatch
-import { ConnectWalletButton } from '../../components'; // Import ConnectWalletButton
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, RootState, AppDispatch } from '../../redux';
+import { ConnectWalletButton } from '../../components';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  // Get user from Redux auth slice
-  // const user = useSelector((state: RootState) => state.auth.user);
-  const user = 'Ahmed';
-
-  // Use useState for nodeStatus as it's dynamic
+  const user = useSelector((state: RootState) => state.auth.user);
   const [nodeStatus, setNodeStatus] = useState<'Active' | 'Not Active' | 'Pending' | 'Offline'>('Not Active');
 
-  const userName = user ? user : 'Guest';
-  const walletBalance = '12,345.67 NEXER'; // This will be your Trust Chain specific token balance eventually
+  // Change to use user.name instead of user.email
+  const userName = user ? user.name : 'Guest';
+
+  const walletBalance = '12,345.67 NEXER';
 
   const handleBecomeNode = () => {
     alert('Simulating "Become a Node" process...');
     console.log('User initiated "Become a Node".');
-    // In a real app, this would likely trigger a flow
-    // that could change nodeStatus, e.g., setNodeStatus("Pending");
   };
 
   const handleLogout = () => {
-    dispatch(logout()); // Dispatch the logout action
+    dispatch(logout());
   };
 
   return (
@@ -36,9 +32,7 @@ const DashboardPage: React.FC = () => {
       <header className='flex justify-between items-center mb-8 pb-4 border-b border-gray-300'>
         <h1 className='text-3xl font-bold text-gray-900'>Welcome, {userName}!</h1>
         <div className='flex items-center space-x-4'>
-          {' '}
-          {/* Container for buttons */}
-          <ConnectWalletButton /> {/* Integrate the new button here */}
+          <ConnectWalletButton />
           <Button onClick={handleLogout} className='bg-red-500 hover:bg-red-700'>
             Logout
           </Button>
