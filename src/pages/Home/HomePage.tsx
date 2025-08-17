@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from '../../components/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, RootState, AppDispatch } from '../../redux';
-import { ConnectWalletButton, NavMenu } from '../../components';
+import { ConnectWalletButton } from '../../components';
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,9 +25,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen p-8 bg-gray-100'>
-      <NavMenu />
-
+    <div className='min-h-screen p-8 '>
       {/* Header */}
       <header className='flex items-center justify-between pb-4 mb-8 border-b border-gray-300'>
         <h1 className='text-3xl font-bold text-gray-900'>Welcome, {userName}!</h1>

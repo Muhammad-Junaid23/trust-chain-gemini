@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch, fetchAssets } from '../../redux';
-import { Link } from 'react-router-dom';
-import { NavMenu } from '../../components';
 
 const AssetListPage: React.FC = () => {
   // Get dispatch and state from Redux
@@ -21,7 +19,6 @@ const AssetListPage: React.FC = () => {
 
   return (
     <div className='container px-4 py-8 mx-auto'>
-      <NavMenu />
       <div className='flex items-center justify-between mb-6'>
         <h1 className='text-3xl font-bold text-gray-800'>Asset List</h1>
         <button

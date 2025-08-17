@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch, createAsset } from '../../redux';
-import { NavMenu } from '../../components';
 
 const CreateAssetPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,10 +21,9 @@ const CreateAssetPage: React.FC = () => {
   };
 
   return (
-    <div className='container px-4 py-8 mx-auto'>
-      <NavMenu />
-      <h1 className='mb-6 text-3xl font-bold text-gray-800'>Create New Asset</h1>
-      <div className='p-6 bg-white rounded-lg shadow-md'>
+    <div className='flex flex-col items-center justify-center px-4 py-8 mx-auto'>
+      <h1 className='mb-8 text-3xl font-bold text-gray-800'>Create New Asset</h1>
+      <div className='p-6 bg-white rounded-lg shadow-md w-96'>
         <form onSubmit={handleSubmit}>
           <div className='mb-4 '>
             <label htmlFor='asset-name' className='block mb-2 text-sm font-medium text-gray-700'>
@@ -59,7 +57,7 @@ const CreateAssetPage: React.FC = () => {
           <button
             type='submit'
             disabled={isLoading}
-            className={`w-full py-2 px-4 rounded-lg text-white font-semibold transition-colors
+            className={` py-2 px-4 rounded-lg text-white font-semibold transition-colors
               ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}
             `}
           >

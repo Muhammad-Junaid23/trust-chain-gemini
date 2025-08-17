@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const NavMenu: React.FC = () => {
   return (
-    <nav className='p-4 mb-4 bg-gray-800 rounded-lg shadow-md'>
+    <nav className='p-4 mb-4 bg-gray-800 shadow-md ps-12'>
       <ul className='flex justify-start space-x-6 text-white'>
         <li>
           <Link to='/home' className='transition-colors hover:text-gray-300'>

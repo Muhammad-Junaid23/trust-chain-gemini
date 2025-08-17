@@ -9,6 +9,7 @@ import { AssetListPage } from './pages/AssetList';
 import { CreateAssetPage } from './pages/CreateAsset';
 import { AdminDashboardPage } from './pages/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
+import Layout from './components/Layout';
 
 const App: React.FC = () => {
   return (
@@ -20,11 +21,12 @@ const App: React.FC = () => {
           <Route path='/signup' element={<SignupPage />} /> {/* NEW ROUTE */}
           {/* Protected Routes Group */}
           <Route element={<PrivateRoute />}>
-            <Route path='/home' element={<HomePage />} />
-            {/* NEW PROTECTED ROUTES */}
-            <Route path='/assets' element={<AssetListPage />} />
-            <Route path='/create-asset' element={<CreateAssetPage />} />
-            <Route path='/admin' element={<AdminDashboardPage />} />
+            <Route element={<Layout />}>
+              <Route path='/home' element={<HomePage />} />
+              <Route path='/assets' element={<AssetListPage />} />
+              <Route path='/create-asset' element={<CreateAssetPage />} />
+              <Route path='/admin' element={<AdminDashboardPage />} />
+            </Route>
           </Route>
           {/* Fallback for unknown routes */}
           <Route

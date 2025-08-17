@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch, fetchAssets } from '../../redux';
-import { NavMenu } from '../../components';
 
 const AdminDashboardPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +19,6 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <div className='container px-4 py-8 mx-auto'>
-      <NavMenu />
       <h1 className='mb-6 text-3xl font-bold text-gray-800'>Admin Dashboard</h1>
       {isLoading && <p className='text-center text-blue-600'>Loading dashboard data...</p>}
       {error && <p className='text-center text-red-500'>{error}</p>}
