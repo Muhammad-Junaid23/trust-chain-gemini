@@ -4,7 +4,10 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 
 import { LoginPage, SignupPage } from './pages/Auth'; // Import SignupPage
-import { DashboardPage } from './pages/Dashboard';
+import { HomePage } from './pages/Home';
+import { AssetListPage } from './pages/AssetList';
+import { CreateAssetPage } from './pages/CreateAsset';
+import { AdminDashboardPage } from './pages/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
 
 const App: React.FC = () => {
@@ -17,14 +20,17 @@ const App: React.FC = () => {
           <Route path='/signup' element={<SignupPage />} /> {/* NEW ROUTE */}
           {/* Protected Routes Group */}
           <Route element={<PrivateRoute />}>
-            <Route path='/dashboard' element={<DashboardPage />} />
-            {/* Add other protected routes here */}
+            <Route path='/home' element={<HomePage />} />
+            {/* NEW PROTECTED ROUTES */}
+            <Route path='/assets' element={<AssetListPage />} />
+            <Route path='/create-asset' element={<CreateAssetPage />} />
+            <Route path='/admin' element={<AdminDashboardPage />} />
           </Route>
           {/* Fallback for unknown routes */}
           <Route
             path='*'
             element={
-              <div className='min-h-screen flex items-center justify-center bg-gray-100'>
+              <div className='flex items-center justify-center min-h-screen bg-gray-100'>
                 <h1 className='text-4xl font-bold text-gray-800'>404 - Page Not Found</h1>
               </div>
             }

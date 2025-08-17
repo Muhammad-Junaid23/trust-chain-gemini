@@ -19,7 +19,7 @@ const SignupPage: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/dashboard', { replace: true });
+      navigate('/home', { replace: true });
     }
   }, [isLoggedIn, navigate]);
 
@@ -49,8 +49,8 @@ const SignupPage: React.FC = () => {
 
   return (
     <AuthLayout>
-      <h2 className='text-2xl font-bold text-center text-gray-800 mb-6'>Create Your Account</h2>
-      <p className='text-sm text-gray-600 text-center mb-6'>Sign up to access your Trust Chain dashboard.</p>
+      <h2 className='mb-6 text-2xl font-bold text-center text-gray-800'>Create Your Account</h2>
+      <p className='mb-6 text-sm text-center text-gray-600'>Sign up to access your Trust Chain dashboard.</p>
       <form onSubmit={handleSignup}>
         <InputField
           label='Full Name'
@@ -92,13 +92,13 @@ const SignupPage: React.FC = () => {
           className='mt-4'
         />
 
-        {localError && <p className='text-red-500 text-sm mb-4 text-center'>{localError}</p>}
+        {localError && <p className='mb-4 text-sm text-center text-red-500'>{localError}</p>}
 
         <Button type='submit' className='w-full mt-6' disabled={isLoading} onClick={() => {}}>
           {isLoading ? 'Signing up...' : 'Sign Up'}
         </Button>
       </form>
-      <p className='text-center text-gray-500 text-sm mt-4'>
+      <p className='mt-4 text-sm text-center text-gray-500'>
         Already have an account?{' '}
         <a href='/' className='text-blue-600 hover:underline'>
           Log in here
