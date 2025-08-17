@@ -15,7 +15,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/dashboard', { replace: true });
+      navigate('/home', { replace: true });
     }
   }, [isLoggedIn, navigate]);
 
@@ -26,8 +26,8 @@ const LoginPage: React.FC = () => {
 
   return (
     <AuthLayout>
-      <h2 className='text-2xl font-bold text-center text-gray-800 mb-6'>Log In to Trust Chain</h2>
-      <p className='text-sm text-gray-600 text-center mb-6'>Log in with your email to access your dashboard.</p>
+      <h2 className='mb-6 text-2xl font-bold text-center text-gray-800'>Log In to Trust Chain</h2>
+      <p className='mb-6 text-sm text-center text-gray-600'>Log in with your email to access your dashboard.</p>
       <form onSubmit={handleLogin}>
         <InputField
           label='Email'
@@ -49,21 +49,21 @@ const LoginPage: React.FC = () => {
           className='mt-4'
         />
 
-        {error && <p className='text-red-500 text-sm mb-4 text-center'>{error}</p>}
+        {error && <p className='mb-4 text-sm text-center text-red-500'>{error}</p>}
 
         <Button type='submit' onClick={() => {}} className='w-full mt-6' disabled={isLoading}>
           {isLoading ? 'Logging In...' : 'Log In'}
         </Button>
       </form>
-      <p className='text-center text-gray-500 text-sm mt-4'>
+      <p className='mt-4 text-sm text-center text-gray-500'>
         Don't have an account?{' '}
         <a href='/signup' className='text-blue-600 hover:underline'>
           Sign up here
         </a>
       </p>
       <div className='mt-4'>
-        <p className='text-center text-purple-950 text-sm'>Example Email : test@example.com</p>
-        <p className='text-center text-purple-900 text-sm mt-1'>Example password : password123</p>
+        <p className='text-sm text-center text-purple-950'>Example Email : test@example.com</p>
+        <p className='mt-1 text-sm text-center text-purple-900'>Example password : password123</p>
       </div>
     </AuthLayout>
   );
